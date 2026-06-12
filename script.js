@@ -1,5 +1,5 @@
 const HOUR = 60 * 60 * 1000;
-const PEST_INTERVAL = 3 * HOUR;
+const PEST_INTERVAL = 5/60 * HOUR;
 const STORAGE_KEY = "twenty-plot-farm-v3";
 const PLOT_COUNT = 20;
 const STARTING_PLOTS = 6;
