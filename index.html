@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>二十块田</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="farm-shell">
+      <header class="hud" aria-label="农场状态">
+        <section class="player-card">
+          <div class="avatar">农</div>
+          <div class="player-lines">
+            <strong><span id="nickname">新农友</span> · Lv.<span id="level">1</span></strong>
+            <div class="xp-row">
+              <span id="xpText">经验 0/100</span>
+              <div class="xp-bar"><span id="xpFill"></span></div>
+            </div>
+            <span id="statusText">从背包取出种子，点击空地播种。</span>
+          </div>
+        </section>
+        <section class="currency-board" aria-label="资产">
+          <div><span>金币</span><strong id="coins">100</strong></div>
+          <div><span>已开垦</span><strong id="unlockedCount">6/20</strong></div>
+        </section>
+        <nav class="tool-strip" aria-label="农场工具">
+          <button id="weedAll" type="button">除草</button>
+          <button id="bugAll" type="button">驱虫</button>
+          <button id="saveGame" type="button">保存</button>
+          <button id="resetGame" type="button">新游戏</button>
+        </nav>
+      </header>
+
+      <section class="farm-scene" aria-label="农场场景">
+        <div class="hills"></div>
+
+        <section class="bag-overlay" aria-label="背包">
+          <div class="panel-head">
+            <h2>背包</h2>
+            <div class="panel-actions">
+              <button id="toggleBag" type="button" aria-expanded="true">收起</button>
+              <button id="clearSelection" type="button">放回</button>
+            </div>
+          </div>
+          <div id="bagList" class="bag-list"></div>
+        </section>
+
+        <button id="shopHouse" class="shop-house" type="button" aria-label="打开种子商店">
+          <span class="shop-roof"></span>
+          <span class="shop-body">商店</span>
+        </button>
+
+        <div class="field-wrap">
+          <div class="pond"></div>
+          <div id="plots" class="plots" aria-label="20块地"></div>
+          <div class="farmhouse" aria-hidden="true">
+            <div class="roof"></div>
+            <div class="house-body">
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="farm-dog" aria-hidden="true">
+            <span class="dog-body"></span>
+            <span class="dog-head"></span>
+            <span class="dog-tail"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="shopTitle">
+      <section class="modal-card shop-modal-card">
+        <div class="modal-head">
+          <h2 id="shopTitle">种子商店</h2>
+          <button id="closeShop" type="button" aria-label="关闭商店">×</button>
+        </div>
+        <p>购买种子后会放入背包，再从背包取出播种。</p>
+        <div id="shopList" class="shop-list"></div>
+      </section>
+    </div>
+
+    <div id="nameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="nameTitle">
+      <form id="nameForm" class="modal-card name-card">
+        <h2 id="nameTitle">给农场主起个昵称</h2>
+        <p>昵称会显示在等级旁边。</p>
+        <input id="nameInput" name="name" maxlength="12" autocomplete="off" placeholder="例如：小田" />
+        <button type="submit">开始种菜</button>
+      </form>
+    </div>
+
+    <template id="shopTemplate">
+      <button class="shop-item" type="button">
+        <span class="item-icon"></span>
+        <span class="item-text">
+          <strong></strong>
+          <small></small>
+        </span>
+        <span class="item-price"></span>
+      </button>
+    </template>
+
+    <template id="bagTemplate">
+      <button class="bag-item" type="button">
+        <span class="item-icon"></span>
+        <strong></strong>
+        <small></small>
+      </button>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
