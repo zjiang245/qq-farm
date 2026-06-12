@@ -5,18 +5,19 @@ const PLOT_COUNT = 20;
 const STARTING_PLOTS = 6;
 
 const seeds = [
-  { id: "radish", name: "萝卜", icon: "🥕", cost: 8, sell: 18, growHours: 0.5 },
-  { id: "potato", name: "土豆", icon: "🥔", cost: 6, sell: 14, growHours: 1 / 60 },
-  { id: "sweet-potato", name: "红薯", icon: "🍠", cost: 10, sell: 24, growHours: 5 / 60 },
-  { id: "cabbage", name: "青菜", icon: "🥬", cost: 12, sell: 30, growHours: 1 },
-  { id: "corn", name: "玉米", icon: "🌽", cost: 20, sell: 54, growHours: 2 },
-  { id: "tomato", name: "番茄", icon: "🍅", cost: 28, sell: 80, growHours: 3 },
-  { id: "pumpkin", name: "南瓜", icon: "🎃", cost: 45, sell: 140, growHours: 5 },
+  { id: "radish", name: "萝卜", icon: "🥕", cost: 2, sell: 4, growHours: 1 / 60 },
+  { id: "potato", name: "土豆", icon: "🥔", cost: 10, sell: 24, growHours: 5 / 60 },
+  { id: "sweet-potato", name: "红薯", icon: "🍠", cost: 20, sell: 48, growHours: 10 / 60 },
+  { id: "cabbage", name: "青菜", icon: "🥬", cost: 60, sell: 155, growHours: 0.5 },
+  { id: "corn", name: "玉米", icon: "🌽", cost: 120, sell: 340, growHours: 1 },
+  { id: "tomato", name: "番茄", icon: "🍅", cost: 240, sell: 720, growHours: 2 },
+  { id: "pumpkin", name: "南瓜", icon: "🎃", cost: 600, sell: 2400, growHours: 5 },
 ];
 
 const now = () => Date.now();
 
 let selectedSeed = null;
+let pendingPurchaseSeed = null;
 let state = loadGame();
 
 const coinsEl = document.querySelector("#coins");
@@ -34,6 +35,8 @@ const bagTemplate = document.querySelector("#bagTemplate");
 const shopModal = document.querySelector("#shopModal");
 const nameModal = document.querySelector("#nameModal");
 const nameInput = document.querySelector("#nameInput");
+const confirmPurchaseBtn = document.querySelector("#confirmPurchase");
+const purchaseSummary = document.querySelector("#purchaseSummary");
 
 document.querySelector("#shopHouse").addEventListener("click", () => {
   shopModal.classList.remove("hidden");
@@ -41,6 +44,12 @@ document.querySelector("#shopHouse").addEventListener("click", () => {
 
 document.querySelector("#closeShop").addEventListener("click", () => {
   shopModal.classList.add("hidden");
+});
+
+confirmPurchaseBtn.addEventListener("click", () => {
+  const seed = seedById(pendingPurchaseSeed);
+  if (!seed) return;
+  buySeed(seed);
 });
 
 document.querySelector("#toggleBag").addEventListener("click", () => {
@@ -232,6 +241,7 @@ function buySeed(seed) {
   state.coins -= seed.cost;
   state.bag[seed.id] += 1;
   selectedSeed = seed.id;
+  pendingPurchaseSeed = null;
   status(`买入 1 包${seed.name}种子，已放进背包。`);
   saveGame();
   render();
@@ -367,14 +377,30 @@ function renderShop() {
   shopList.replaceChildren();
   seeds.forEach((seed) => {
     const node = shopTemplate.content.firstElementChild.cloneNode(true);
+    node.classList.toggle("pending", pendingPurchaseSeed === seed.id);
     node.disabled = state.coins < seed.cost;
     node.querySelector(".item-icon").textContent = seed.icon;
     node.querySelector("strong").textContent = seed.name;
     node.querySelector("small").textContent = `${formatHours(seed.growHours)}成熟`;
     node.querySelector(".item-price").textContent = `${seed.cost}金`;
-    node.addEventListener("click", () => buySeed(seed));
+    node.addEventListener("click", () => {
+      pendingPurchaseSeed = seed.id;
+      render();
+    });
     shopList.append(node);
   });
+  renderPurchaseConfirm();
+}
+
+function renderPurchaseConfirm() {
+  const seed = seedById(pendingPurchaseSeed);
+  if (!seed) {
+    purchaseSummary.textContent = "请选择一种种子";
+    confirmPurchaseBtn.disabled = true;
+    return;
+  }
+  purchaseSummary.textContent = `购买 1 包 ${seed.name}：${seed.cost} 金币`;
+  confirmPurchaseBtn.disabled = state.coins < seed.cost;
 }
 
 function renderBag() {
